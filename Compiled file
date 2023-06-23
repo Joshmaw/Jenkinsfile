@@ -1,0 +1,84 @@
+pipeline {
+    agent {
+         label 'Linux-machine'
+     }
+     environment { 
+        DEPLOY_TO = 'production'
+    }
+     environment { 
+   MY_CRED = credentials('MY_SECRET') 
+    }
+  
+    parameters {
+        string(name: 'NAME', description: 'Please tell me your name?')
+
+        text(name: 'DESC', description: 'Describe the job details')
+    triggers {
+        cron('H/15 * * * *')
+    }
+    stages {
+        stage('Initialization') {
+            steps {
+                echo "${DEPLOY_TO}"
+            }
+        }
+    }
+        stage('Initialization') {
+            environment { 
+                   JOB_TIME = sh (returnStdout: true, script: "date '+%A %W %Y %X'").trim()
+            }
+         }
+      }
+            steps {
+                sh 'echo $JOB_TIME'
+            }
+        stage('Load Credentials') {
+            steps {
+                echo "Username is $MY_CRED_USR"
+                echo "Password is $MY_CRED_PSW"
+            }
+        }
+        stage('Printing Parameters') {
+            steps {
+                echo "Hello ${params.NAME}"
+ 
+                echo "Job Details: ${params.DESC}"
+            }
+        stage('Build') {
+            steps {
+                echo "Building stage is running"
+            }
+         stage('Example') {
+            steps {
+                echo 'Hello World
+            }
+        }
+    }
+}
+    post {
+         always {
+             echo "You can always see me"
+         }
+         success {
+              echo "I am running because the job ran successfully"
+         }
+         unstable {
+              echo "Gear up! The build is unstable. Try to fix it"
+         }
+         failure {
+             echo "OMG! The build failed"
+         }
+     }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
+}
